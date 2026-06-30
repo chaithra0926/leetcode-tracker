@@ -1,12 +1,22 @@
+import { useState, useEffect } from 'react'
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 
 function Dashboard({ problems }) {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+
+  useEffect(() => {
+    function handleResize() {
+      setIsMobile(window.innerWidth < 768)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   const total = problems.length
   const easy = problems.filter(p => p.difficulty === 'Easy').length
   const medium = problems.filter(p => p.difficulty === 'Medium').length
   const hard = problems.filter(p => p.difficulty === 'Hard').length
 
-  // Streak calculator
   const getDayKey = (dateStr) => new Date(dateStr).toDateString()
   const uniqueDays = [...new Set(problems.map(p => getDayKey(p.addedOn)).filter(Boolean))]
   let streak = 0
@@ -18,7 +28,6 @@ function Dashboard({ problems }) {
     else break
   }
 
-  // Weekly bar chart data
   const weekData = Array.from({ length: 7 }, (_, i) => {
     const d = new Date()
     d.setDate(d.getDate() - (6 - i))
@@ -27,7 +36,6 @@ function Dashboard({ problems }) {
     return { day: label, count }
   })
 
-  // Pie chart data
   const pieData = [
     { name: 'Easy', value: easy, color: '#10b981' },
     { name: 'Medium', value: medium, color: '#f59e0b' },
@@ -52,17 +60,16 @@ function Dashboard({ problems }) {
   }
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '1100px', margin: '0 auto' }}>
+    <div style={{ padding: isMobile ? '1.25rem' : '2rem', maxWidth: '1100px', margin: '0 auto' }}>
 
-      {/* Header */}
-      <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div style={{ marginBottom: '2rem', display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'flex-start', gap: isMobile ? '1rem' : 0 }}>
         <div>
           <p style={{ color: '#7c3aed', fontFamily: 'Space Grotesk', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Overview</p>
-          <h1 style={{ fontFamily: 'Space Grotesk', fontSize: '2rem', fontWeight: 700, color: '#fff' }}>Your Progress</h1>
+          <h1 style={{ fontFamily: 'Space Grotesk', fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 700, color: '#fff' }}>Your Progress</h1>
           <p style={{ color: '#64748b', marginTop: '0.4rem' }}>Track every problem you conquer</p>
         </div>
         {streak > 0 && (
-          <div style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: '12px', padding: '1rem 1.5rem', textAlign: 'center' }}>
+          <div style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: '12px', padding: '1rem 1.5rem', textAlign: 'center', alignSelf: isMobile ? 'flex-start' : 'auto' }}>
             <p style={{ fontSize: '2rem' }}>🔥</p>
             <p style={{ fontFamily: 'Space Grotesk', fontWeight: 700, color: '#f59e0b', fontSize: '1.5rem' }}>{streak}</p>
             <p style={{ color: '#64748b', fontSize: '0.75rem' }}>day streak</p>
@@ -70,26 +77,23 @@ function Dashboard({ problems }) {
         )}
       </div>
 
-      {/* Stats Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
         {stats.map((stat) => (
           <div key={stat.label} style={{
             background: stat.bg,
             border: `1px solid ${stat.border}`,
             borderRadius: '12px',
-            padding: '1.5rem',
+            padding: isMobile ? '1rem' : '1.5rem',
           }}>
             <p style={{ color: '#64748b', fontSize: '0.85rem', marginBottom: '0.5rem' }}>{stat.label}</p>
-            <p style={{ fontFamily: 'Space Grotesk', fontSize: '2.5rem', fontWeight: 700, color: stat.color }}>{stat.value}</p>
+            <p style={{ fontFamily: 'Space Grotesk', fontSize: isMobile ? '1.8rem' : '2.5rem', fontWeight: 700, color: stat.color }}>{stat.value}</p>
           </div>
         ))}
       </div>
 
-      {/* Charts Row */}
       {total > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '1rem', marginBottom: '2rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1.5fr', gap: '1rem', marginBottom: '2rem' }}>
 
-          {/* Pie Chart */}
           <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '1.5rem' }}>
             <p style={{ fontFamily: 'Space Grotesk', fontWeight: 600, color: '#e2e8f0', marginBottom: '1rem' }}>Difficulty Breakdown</p>
             <ResponsiveContainer width="100%" height={200}>
@@ -102,7 +106,7 @@ function Dashboard({ problems }) {
                 <Tooltip contentStyle={tooltipStyle} />
               </PieChart>
             </ResponsiveContainer>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '0.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
               {pieData.map(d => (
                 <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: d.color }} />
@@ -112,7 +116,6 @@ function Dashboard({ problems }) {
             </div>
           </div>
 
-          {/* Bar Chart */}
           <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '1.5rem' }}>
             <p style={{ fontFamily: 'Space Grotesk', fontWeight: 600, color: '#e2e8f0', marginBottom: '1rem' }}>This Week</p>
             <ResponsiveContainer width="100%" height={200}>
@@ -133,7 +136,6 @@ function Dashboard({ problems }) {
         </div>
       )}
 
-      {/* Recent Problems */}
       <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '1.5rem' }}>
         <p style={{ fontFamily: 'Space Grotesk', fontWeight: 600, marginBottom: '1rem', color: '#e2e8f0' }}>Recently Solved</p>
         {recentProblems.length === 0 ? (
@@ -144,11 +146,11 @@ function Dashboard({ problems }) {
         ) : (
           recentProblems.map((p, i) => (
             <div key={i} style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              padding: '0.75rem 0',
+              display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between',
+              padding: '0.75rem 0', gap: isMobile ? '0.5rem' : 0,
               borderBottom: i < recentProblems.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
                 <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#7c3aed' }} />
                 <span style={{ color: '#e2e8f0', fontWeight: 500 }}>{p.name}</span>
                 {p.topic && <span style={{ background: 'rgba(6,182,212,0.15)', color: '#06b6d4', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem' }}>{p.topic}</span>}
