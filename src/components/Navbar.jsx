@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 
-function Navbar({ problems }) {
+function Navbar({ problems, user, onLogout }) {
   const location = useLocation()
 
   const overdue = problems ? problems.filter(p => {
@@ -44,7 +44,7 @@ function Navbar({ problems }) {
         </span>
       </div>
 
-      <div style={{ display: 'flex', gap: '0.5rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         {[
           { label: 'Dashboard', path: '/' },
           { label: 'Problems', path: '/problems' },
@@ -70,6 +70,21 @@ function Navbar({ problems }) {
             )}
           </Link>
         ))}
+
+        {user && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginLeft: '1rem', paddingLeft: '1rem', borderLeft: '1px solid rgba(255,255,255,0.1)' }}>
+            <img src={user.photoURL} alt={user.displayName} style={{ width: '28px', height: '28px', borderRadius: '50%' }} />
+            <button onClick={onLogout} style={{
+              background: 'rgba(239,68,68,0.1)',
+              border: '1px solid rgba(239,68,68,0.2)',
+              borderRadius: '6px',
+              padding: '0.4rem 0.8rem',
+              color: '#ef4444',
+              fontSize: '0.8rem',
+              cursor: 'pointer',
+            }}>Logout</button>
+          </div>
+        )}
       </div>
     </nav>
   )
