@@ -3,12 +3,12 @@ import { getAuth, GoogleAuthProvider } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAPs8pZg9kZcA5eiHJtViYnae0rHEc0HzM",
-  authDomain: "leetcode-tracker-b0993.firebaseapp.com",
-  projectId: "leetcode-tracker-b0993",
-  storageBucket: "leetcode-tracker-b0993.firebasestorage.app",
-  messagingSenderId: "1093674408148",
-  appId: "1:1093674408148:web:9835be84efd2e004094341"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 }
 
 const app = initializeApp(firebaseConfig)
