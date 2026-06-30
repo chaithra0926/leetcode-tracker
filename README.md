@@ -43,7 +43,10 @@ LeetTracker solves this using the **Ebbinghaus Forgetting Curve** (the same prin
 
 ## 📸 Screenshots
 
-*(Add 2–3 screenshots here: Dashboard, Problem List, Revision page)*
+![Login](screenshots/login.png)
+![Dashboard](screenshots/dashboard.png)
+![Problem List](screenshots/problemlist.png)
+![Revision Scheduler](screenshots/revision.png)
 
 ---
 
@@ -75,5 +78,5 @@ npm run dev
 ## 👩‍💻 Author
 
 **Chaithra**
-B.Tech ECE Student | Aspiring Frontend Developer
+B.Tech ECE Student 
 [GitHub](https://github.com/chaithra0926)
