@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { auth, db } from './firebase'
@@ -14,8 +14,9 @@ function App() {
   const [user, setUser] = useState(null)
   const [problems, setProblems] = useState([])
   const [loading, setLoading] = useState(true)
+  const [dataLoaded, setDataLoaded] = useState(false)
 
-  // Watch login state
+  // Watch login state and load data
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser)
@@ -27,18 +28,21 @@ function App() {
         } else {
           setProblems([])
         }
+        setDataLoaded(true)
+      } else {
+        setDataLoaded(false)
       }
       setLoading(false)
     })
     return unsubscribe
   }, [])
 
-  // Save problems to Firestore whenever they change
+  // Save problems to Firestore - ONLY after initial data has loaded
   useEffect(() => {
-    if (user) {
+    if (user && dataLoaded) {
       setDoc(doc(db, 'users', user.uid), { problems })
     }
-  }, [problems, user])
+  }, [problems, user, dataLoaded])
 
   if (loading) {
     return (
