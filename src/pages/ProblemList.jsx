@@ -45,6 +45,11 @@ function ProblemList({ problems, setProblems }) {
     toast.error(`"${problemName}" removed`)
   }
 
+  function getLeetCodeUrl(name) {
+    const slug = name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+    return `https://leetcode.com/problems/${slug}/`
+  }
+
   const filtered = problems
     .filter(p => filter === 'All' || p.difficulty === filter)
     .filter(p => p.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -64,14 +69,12 @@ function ProblemList({ problems, setProblems }) {
   return (
     <div style={{ padding: '2rem', maxWidth: '900px', margin: '0 auto' }}>
 
-      {/* Header */}
       <div style={{ marginBottom: '2rem' }}>
         <p style={{ color: '#7c3aed', fontFamily: 'Space Grotesk', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Problems</p>
         <h1 style={{ fontFamily: 'Space Grotesk', fontSize: '2rem', fontWeight: 700, color: '#fff' }}>Problem List</h1>
         <p style={{ color: '#64748b', marginTop: '0.4rem' }}>{problems.length} problems solved so far</p>
       </div>
 
-      {/* Add Problem Form */}
       <div style={{ background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.25)', borderRadius: '14px', padding: '1.5rem', marginBottom: '2rem' }}>
         <p style={{ fontFamily: 'Space Grotesk', fontWeight: 600, color: '#e2e8f0', marginBottom: '1rem' }}>Add New Problem</p>
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.2fr 1fr auto', gap: '0.75rem', alignItems: 'end' }}>
@@ -120,7 +123,6 @@ function ProblemList({ problems, setProblems }) {
         </div>
       </div>
 
-      {/* Search + Filter */}
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', alignItems: 'center' }}>
         <input
           style={{ ...inputStyle, width: '300px' }}
@@ -141,7 +143,6 @@ function ProblemList({ problems, setProblems }) {
         </div>
       </div>
 
-      {/* Problem Cards */}
       {filtered.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '4rem', color: '#475569' }}>
           <p style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🧩</p>
@@ -160,7 +161,14 @@ function ProblemList({ problems, setProblems }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <span style={{ color: '#475569', fontSize: '0.85rem', fontWeight: 600, minWidth: '28px' }}>#{i + 1}</span>
                 <div>
-                  <p style={{ color: '#e2e8f0', fontWeight: 500 }}>{p.name}</p>
+                  <a
+                    href={getLeetCodeUrl(p.name)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: '#e2e8f0', fontWeight: 500, textDecoration: 'none' }}
+                  >
+                    {p.name} ↗
+                  </a>
                   <div style={{ display: 'flex', gap: '0.5rem', marginTop: '3px' }}>
                     {p.topic && <span style={{ color: '#06b6d4', fontSize: '0.75rem' }}>{p.topic}</span>}
                     {p.addedOn && <span style={{ color: '#475569', fontSize: '0.75rem' }}>Added: {new Date(p.addedOn).toDateString()}</span>}
